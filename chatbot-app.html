@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Islamic Chatbot</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #0a0e0f;
+      }
+      .chat-container {
+        width: 100dvw;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+      }
+      .chat-box {
+        overflow-y: auto;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem;
+        align-items: start;
+      }
+      .chat-input {
+        padding: 1rem;
+        display: flex;
+        gap: 0.5rem;
+      }
+      .chat-message {
+        background-color: #252b2e;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        color: #a3b0b8;
+        max-width: 75%;
+      }
+      .user-message {
+        text-align: right;
+        align-self: end;
+        background-color: #48a6c3;
+        color: #252b2e;
+      }
+      .chat-input input {
+        flex-grow: 1;
+        padding: 0.75rem;
+        font-size: 1.1rem;
+      }
+
+      .chat-input > * {
+        border-radius: 0.5rem;
+      }
+
+      .chat-input button {
+        background-color: #252b2e;
+        color: #ffffff;
+        outline: none;
+        border: none;
+        font-weight: 600;
+        padding: 0.75rem;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="chat-box" id="chat-box">
+        <div class="chat-message bot-message">
+          Assalamu Alaikum! How can I assist you today? (type 'quit' to exit)
+        </div>
+      </div>
+      <form onsubmit="sendMessage(event)" class="chat-input" autocomplete="off">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Type your message here..."
+        />
+        <button type="submit">Send</button>
+      </div>
+    </div>
+
+    <script>
+      const pairs = [
+        [/(hi|hey)/i, "Yes, how can I assist you today?"],
+        [
+          /(assalamu alaikum|assalamalaikum|salaamalaikum|assalamualaikum)/i,
+          "Wa Alaikum Assalam! How can I assist you today?",
+        ],
+        [/(aur sab thik|khairiyat|how are you\?)/i, "Alhamdulillah"],
+        [
+          /(are you a muslim|how do we know that we are muslim)/i,
+          "Whoever believes in one God (Allah) and puts their faith in Him are Muslims",
+        ],
+        [
+          /(what will happen to non-muslims on the day of judgement|what is the day of judgement|aakhirat kaisi hogi)/i,
+          "On the Day of Judgement, as described in Hadith, it will be the day when Allah (SWT) decides who will go to Heaven and Hell based on their sins and repentance. So it is better for us to pray and seek guidance from the Quran and Hadith, because Hellfire is far too dangerous and every non-Muslim will suffer the heat of Hellfire",
+        ],
+        [
+          /(what is islam)/i,
+          "Islam is a monotheistic Abrahamic religion teaching that Muhammad is a messenger of God.",
+        ],
+        [
+          /(tell me a quranic verse)/i,
+          "Here is a verse from the Quran: 'Indeed, Allah is with those who fear Him and those who are doers of good.' (Quran 16:128)",
+        ],
+        [/(thank you)/i, "You're welcome! No problem!"],
+        [/(bye|goodbye)/i, "Goodbye! Have a great day! Take care!"],
+      ];
+
+      function genericResponse() {
+        return "I'm sorry, I don't have an answer to that question. Please ask something else or seek guidance from knowledgeable sources.";
+      }
+
+      function sendMessage(e) {
+        e.preventDefault();
+
+        const userInput = document.getElementById("user-input").value.trim();
+
+        if (!userInput) {
+          return;
+        }
+
+        if (userInput.toLowerCase() === "quit") {
+          appendMessage("Goodbye! Have a great day!", "bot-message");
+          document.getElementById("user-input").value = "";
+          return;
+        }
+
+        appendMessage(userInput, "user-message");
+        let response = null;
+        for (const [pattern, reply] of pairs) {
+          if (pattern.test(userInput)) {
+            response = reply;
+            break;
+          }
+        }
+
+        if (!response) {
+          response = genericResponse();
+        }
+        appendMessage(response, "bot-message");
+        document.getElementById("user-input").value = "";
+      }
+
+      function appendMessage(message, className) {
+        const chatBox = document.getElementById("chat-box");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "chat-message " + className;
+        messageDiv.textContent = message;
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    </script>
+  </body>
+</html>
